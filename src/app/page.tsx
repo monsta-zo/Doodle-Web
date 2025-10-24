@@ -434,6 +434,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#0a0a0a" }}>
+      {/* 상태창 여백을 위한 상단 패딩 */}
+      <div className="h-3"></div>
+
       {/* 상단 헤더 */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-gray-800/50">
         {/* 로고 및 이름 */}
@@ -769,10 +772,25 @@ export default function Home() {
 
                       {/* 글 내용과 이미지는 블러 처리 */}
                       <div
-                        className={`mb-3 px-3 py-1 ${
+                        className={`mb-3 px-3 py-1 relative ${
                           locationState !== "in_range" ? "blur-sm" : ""
                         }`}
                       >
+                        {/* 범위 밖일 때 자물쇠 아이콘과 메시지 */}
+                        {locationState !== "in_range" && (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 rounded-lg z-10">
+                            <div className="text-center">
+                              <div className="text-4xl mb-2">🔒</div>
+                              <p className="text-white text-sm font-medium">
+                                범위 내에 있어야 볼 수 있습니다
+                              </p>
+                              <p className="text-gray-300 text-xs mt-1">
+                                📍 테스트 존 #1 근처로 이동해주세요
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
                         <p className="text-[16px] text-gray-200 leading-6 mb-2">
                           {post.text}
                         </p>
