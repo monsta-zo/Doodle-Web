@@ -39,7 +39,8 @@ export default function Home() {
   const [userLocation, setUserLocation] = useState<GeolocationPosition | null>(
     null
   );
-  const [locationState, setLocationState] = useState<LocationState>("in_range");
+  const [locationState, setLocationState] =
+    useState<LocationState>("not_requested");
   const [isLoading, setIsLoading] = useState(false);
   const [watchId, setWatchId] = useState<number | null>(null);
   const [postText, setPostText] = useState("");
