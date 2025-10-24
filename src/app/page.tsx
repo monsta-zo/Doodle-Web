@@ -508,7 +508,7 @@ export default function Home() {
             />
 
             {/* 전포존 마커 */}
-            <Marker
+            {/* <Marker
               position={{
                 lat: JEONPO_QR_ZONE.latitude,
                 lng: JEONPO_QR_ZONE.longitude,
@@ -522,11 +522,11 @@ export default function Home() {
                   strokeColor: "#ffffff",
                   strokeWeight: 2,
                   scale: 1.2,
-                  anchor: [12, 24], // 마커의 정중앙을 좌표에 맞춤
+                  // anchor: google.maps.Point(12, 24), // 마커의 정중앙을 좌표에 맞춤
                 },
                 animation: null, // 애니메이션 비활성화
               }}
-            />
+            /> */}
 
             {/* 사용자 현재 위치 마커 (인증 후에만 표시) */}
             {userLocation && (
