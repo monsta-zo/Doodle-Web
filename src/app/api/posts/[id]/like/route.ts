@@ -1,37 +1,5 @@
 import { NextResponse } from "next/server";
-import fs from "fs/promises";
-import path from "path";
-
-const postsFilePath = path.join("/tmp", "posts.json");
-
-interface Post {
-  id: string;
-  text: string;
-  image: string | null;
-  location: any;
-  timestamp: string;
-  author: string;
-  likes: any[];
-  likeCount: number;
-}
-
-async function readPosts(): Promise<Post[]> {
-  try {
-    const data = await fs.readFile(postsFilePath, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
-      await fs.mkdir(path.dirname(postsFilePath), { recursive: true });
-      await fs.writeFile(postsFilePath, "[]", "utf-8");
-      return [];
-    }
-    throw error;
-  }
-}
-
-async function writePosts(posts: Post[]): Promise<void> {
-  await fs.writeFile(postsFilePath, JSON.stringify(posts, null, 2), "utf-8");
-}
+import { KVStore } from "@/lib/kv-store";
 
 export async function POST(
   request: Request,
@@ -40,23 +8,18 @@ export async function POST(
   try {
     const { id: postId } = await params;
 
-    const posts = await readPosts();
-    const postIndex = posts.findIndex((post) => post.id === postId);
+    // 임시 사용자 ID (실제로는 세션에서 가져와야 함)
+    const userId = "anonymous_user";
 
-    if (postIndex === -1) {
+    const result = await KVStore.toggleLike(postId, userId);
+
+    if (!result.success) {
       return NextResponse.json({ message: "Post not found" }, { status: 404 });
     }
 
-    const post = posts[postIndex];
-
-    // 좋아요 수 증가
-    post.likeCount = (post.likeCount || 0) + 1;
-
-    await writePosts(posts);
-
     return NextResponse.json({
       success: true,
-      likeCount: post.likeCount,
+      likeCount: result.likeCount,
     });
   } catch (error) {
     console.error("Error updating like:", error);
@@ -73,8 +36,7 @@ export async function GET(
 ) {
   try {
     const { id: postId } = await params;
-    const posts = await readPosts();
-    const post = posts.find((post) => post.id === postId);
+    const post = await KVStore.findPost(postId);
 
     if (!post) {
       return NextResponse.json({ message: "Post not found" }, { status: 404 });
