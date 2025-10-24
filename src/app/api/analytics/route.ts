@@ -1,15 +1,8 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { redis } from "@/lib/redis-client";
 
-// 분석 데이터 파일 경로
-const ANALYTICS_FILE = path.join(process.cwd(), "data", "analytics.json");
-
-// 데이터 디렉토리 생성
-const dataDir = path.join(process.cwd(), "data");
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
-}
+// Redis 키
+const ANALYTICS_KEY = "analytics";
 
 // 기본 분석 데이터 구조
 const defaultAnalytics = {
@@ -23,13 +16,10 @@ const defaultAnalytics = {
 };
 
 // 분석 데이터 읽기
-function readAnalytics() {
+async function readAnalytics() {
   try {
-    if (!fs.existsSync(ANALYTICS_FILE)) {
-      return defaultAnalytics;
-    }
-    const data = fs.readFileSync(ANALYTICS_FILE, "utf8");
-    return JSON.parse(data);
+    const data = await redis.get(ANALYTICS_KEY);
+    return data ? JSON.parse(data as string) : defaultAnalytics;
   } catch (error) {
     console.error("Error reading analytics:", error);
     return defaultAnalytics;
@@ -47,9 +37,9 @@ interface AnalyticsData {
 }
 
 // 분석 데이터 저장
-function writeAnalytics(data: AnalyticsData) {
+async function writeAnalytics(data: AnalyticsData) {
   try {
-    fs.writeFileSync(ANALYTICS_FILE, JSON.stringify(data, null, 2));
+    await redis.set(ANALYTICS_KEY, JSON.stringify(data));
   } catch (error) {
     console.error("Error writing analytics:", error);
   }
@@ -60,7 +50,7 @@ export async function POST(request: Request) {
   try {
     const { event } = await request.json();
 
-    const analytics = readAnalytics();
+    const analytics = await readAnalytics();
 
     switch (event) {
       case "page_view":
@@ -86,7 +76,7 @@ export async function POST(request: Request) {
     }
 
     analytics.lastUpdated = new Date().toISOString();
-    writeAnalytics(analytics);
+    await writeAnalytics(analytics);
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -101,7 +91,7 @@ export async function POST(request: Request) {
 // 분석 데이터 조회
 export async function GET() {
   try {
-    const analytics = readAnalytics();
+    const analytics = await readAnalytics();
     return NextResponse.json(analytics);
   } catch (error) {
     console.error("Error fetching analytics:", error);
