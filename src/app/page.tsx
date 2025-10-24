@@ -778,14 +778,11 @@ export default function Home() {
                       >
                         {/* 범위 밖일 때 자물쇠 아이콘과 메시지 */}
                         {locationState !== "in_range" && (
-                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 rounded-lg z-10">
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 rounded-lg z-50">
                             <div className="text-center">
                               <div className="text-4xl mb-2">🔒</div>
                               <p className="text-white text-sm font-medium">
                                 범위 내에 있어야 볼 수 있습니다
-                              </p>
-                              <p className="text-gray-300 text-xs mt-1">
-                                📍 테스트 존 #1 근처로 이동해주세요
                               </p>
                             </div>
                           </div>
