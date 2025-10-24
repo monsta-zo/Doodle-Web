@@ -122,7 +122,32 @@ export class KVStore {
     }
   }
 
-  // 좋아요 토글
+  // 좋아요 추가 (단순 증가)
+  static async addLike(
+    postId: string,
+    userId: string
+  ): Promise<{ success: boolean; likeCount: number }> {
+    try {
+      const post = await this.findPost(postId);
+      if (!post) {
+        return { success: false, likeCount: 0 };
+      }
+
+      // 좋아요 수만 증가 (토글 없음)
+      const newLikeCount = post.likeCount + 1;
+
+      await this.updatePost(postId, {
+        likeCount: newLikeCount,
+      });
+
+      return { success: true, likeCount: newLikeCount };
+    } catch (error) {
+      console.error("Error adding like:", error);
+      return { success: false, likeCount: 0 };
+    }
+  }
+
+  // 좋아요 토글 (기존 함수 유지 - 호환성)
   static async toggleLike(
     postId: string,
     userId: string
