@@ -5,10 +5,10 @@ import { GoogleMap, Marker, Circle, LoadScript } from "@react-google-maps/api";
 
 // 테스트용 QR존 설정 (현재 위치 주변)
 const JEONPO_QR_ZONE = {
-  latitude: 35.183205095188974, // 사용자 현재 위치
-  longitude: 129.10708116341317,
-  radius: 50, // 50m 반경 (테스트용)
-  name: "테스트 존",
+  latitude: 35.1559302, // 사용자 현재 위치
+  longitude: 129.0608384,
+  radius: 100, // 50m 반경 (테스트용)
+  name: "서면 어딘가",
 };
 
 // Google Maps 설정
@@ -472,7 +472,7 @@ export default function Home() {
           style={{ backgroundColor: "rgba(123, 0, 255, 0.1)" }}
         >
           <span className="text-purple-400 text-sm font-semibold">
-            📍 테스트 존 #1
+            📍 서면 어딘가 #1
           </span>
         </div>
       </div>
@@ -487,13 +487,16 @@ export default function Home() {
           <GoogleMap
             mapContainerStyle={mapContainerStyle}
             center={mapCenter}
-            zoom={18}
+            zoom={16}
             options={mapOptions}
             mapTypeId="roadmap"
           >
             {/* 전포존 원 */}
             <Circle
-              center={mapCenter}
+              center={{
+                lat: JEONPO_QR_ZONE.latitude,
+                lng: JEONPO_QR_ZONE.longitude,
+              }}
               radius={JEONPO_QR_ZONE.radius}
               options={{
                 strokeColor: "rgba(123, 0, 255, 0.8)",
@@ -506,8 +509,11 @@ export default function Home() {
 
             {/* 전포존 마커 */}
             <Marker
-              position={mapCenter}
-              title="테스트 존"
+              position={{
+                lat: JEONPO_QR_ZONE.latitude,
+                lng: JEONPO_QR_ZONE.longitude,
+              }}
+              title={JEONPO_QR_ZONE.name}
               options={{
                 icon: {
                   path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
@@ -516,6 +522,7 @@ export default function Home() {
                   strokeColor: "#ffffff",
                   strokeWeight: 2,
                   scale: 1.2,
+                  anchor: [12, 24], // 마커의 정중앙을 좌표에 맞춤
                 },
                 animation: null, // 애니메이션 비활성화
               }}
@@ -625,7 +632,7 @@ export default function Home() {
       )}
 
       {locationState === "out_of_range" && (
-        <div className="px-4">
+        <div className="px-4 mt-4">
           <div className="bg-red-500/10 rounded-2xl p-3 border border-red-500/20 text-center">
             <div className="flex items-center mb-2 justify-center">
               <span className="text-red-400 text-lg mr-2">🚫</span>
