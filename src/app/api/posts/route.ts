@@ -2,14 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
-// 데이터 파일 경로
-const DATA_FILE = path.join(process.cwd(), "data", "posts.json");
-
-// 데이터 디렉토리 생성
-const dataDir = path.join(process.cwd(), "data");
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
-}
+// 데이터 파일 경로 (Vercel에서는 /tmp 디렉토리 사용)
+const DATA_FILE = path.join("/tmp", "posts.json");
 
 // 글 목록 조회
 export async function GET() {

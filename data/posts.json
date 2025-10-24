@@ -1,5 +1,18 @@
 [
   {
+    "id": "1761295841360",
+    "text": "테스트 포스트",
+    "image": null,
+    "location": {
+      "latitude": 35.183205095188974,
+      "longitude": 129.10708116341317
+    },
+    "timestamp": "2025-10-24T08:50:41.360Z",
+    "author": "익명의 방문자",
+    "likes": [],
+    "likeCount": 0
+  },
+  {
     "id": "1761290785178",
     "text": "나도 글 함 써보자",
     "image": "/uploads/image_1761290785121_8med8odwd.jpg",

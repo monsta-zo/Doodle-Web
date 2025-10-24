@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
 
-const postsFilePath = path.join(process.cwd(), "data", "posts.json");
+const postsFilePath = path.join("/tmp", "posts.json");
 
 interface Post {
   id: string;
