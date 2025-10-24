@@ -771,14 +771,31 @@ export default function Home() {
                       </div>
 
                       {/* 글 내용과 이미지는 블러 처리 */}
-                      <div
-                        className={`mb-3 px-3 py-1 relative ${
-                          locationState !== "in_range" ? "blur-sm" : ""
-                        }`}
-                      >
+                      <div className="mb-3 px-3 py-1 relative">
+                        {/* 글 내용 */}
+                        <div
+                          className={`${
+                            locationState !== "in_range" ? "blur-sm" : ""
+                          }`}
+                        >
+                          <p className="text-[16px] text-gray-200 leading-6 mb-2">
+                            {post.text}
+                          </p>
+                          {post.image && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              width={300}
+                              height={300}
+                              src={post.image}
+                              alt="사용자 사진"
+                              className="w-full aspect-square object-cover rounded-lg"
+                            />
+                          )}
+                        </div>
+
                         {/* 범위 밖일 때 자물쇠 아이콘과 메시지 */}
                         {locationState !== "in_range" && (
-                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 rounded-lg z-50">
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-lg z-50 min-h-[120px]">
                             <div className="text-center">
                               <div className="text-4xl mb-2">🔒</div>
                               <p className="text-white text-sm font-medium">
@@ -786,20 +803,6 @@ export default function Home() {
                               </p>
                             </div>
                           </div>
-                        )}
-
-                        <p className="text-[16px] text-gray-200 leading-6 mb-2">
-                          {post.text}
-                        </p>
-                        {post.image && (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            width={300}
-                            height={300}
-                            src={post.image}
-                            alt="사용자 사진"
-                            className="w-full aspect-square object-cover rounded-lg"
-                          />
                         )}
 
                         {/* 좋아요 버튼 */}
