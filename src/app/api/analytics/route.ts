@@ -56,7 +56,7 @@ function writeAnalytics(data: AnalyticsData) {
 }
 
 // 이벤트 기록
-export async function POST(request) {
+export async function POST(request: Request) {
   try {
     const { event } = await request.json();
 
