@@ -57,7 +57,6 @@ export default function Home() {
     }>
   >([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
-  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
   const [isSubmittingPost, setIsSubmittingPost] = useState(false);
 
   // 분석 이벤트 추적 함수
@@ -88,12 +87,9 @@ export default function Home() {
     };
   }, [watchId]);
 
-  // 좋아요 토글 함수
-  const toggleLike = async (postId: string) => {
+  // 좋아요 추가 함수
+  const addLike = async (postId: string) => {
     try {
-      // 즉시 UI 업데이트 (낙관적 업데이트)
-      setLikedPosts((prev) => new Set(prev).add(postId));
-
       // 좋아요 클릭 이벤트 추적
       trackEvent("like_clicked");
 
@@ -117,22 +113,9 @@ export default function Home() {
             (a, b) => (b.likeCount || 0) - (a.likeCount || 0)
           );
         });
-      } else {
-        // 실패 시 UI 롤백
-        setLikedPosts((prev) => {
-          const newSet = new Set(prev);
-          newSet.delete(postId);
-          return newSet;
-        });
       }
     } catch (error) {
-      console.error("Error toggling like:", error);
-      // 실패 시 UI 롤백
-      setLikedPosts((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(postId);
-        return newSet;
-      });
+      console.error("Error adding like:", error);
     }
   };
 
@@ -725,27 +708,11 @@ export default function Home() {
                     {/* 좋아요 버튼 */}
                     <div className="flex items-center justify-end mt-3">
                       <button
-                        onClick={() => toggleLike(posts[0].id)}
-                        className={`flex items-center space-x-1 px-3 py-1 rounded-full transition-colors duration-150 active:scale-95 ${
-                          likedPosts.has(posts[0].id)
-                            ? "bg-red-500/20 border border-red-500/30"
-                            : "bg-gray-700/50 hover:bg-gray-600/50 border border-transparent"
-                        }`}
+                        onClick={() => addLike(posts[0].id)}
+                        className="flex items-center space-x-1 px-3 py-1 rounded-full transition-colors duration-150 active:scale-95 bg-gray-700/50 hover:bg-gray-600/50 border border-transparent"
                       >
-                        <span
-                          className={`text-sm transition-transform duration-150 ${
-                            likedPosts.has(posts[0].id) ? "scale-125" : ""
-                          }`}
-                        >
-                          ❤️
-                        </span>
-                        <span
-                          className={`text-sm transition-colors duration-150 ${
-                            likedPosts.has(posts[0].id)
-                              ? "text-red-300 font-bold"
-                              : "text-gray-300"
-                          }`}
-                        >
+                        <span className="text-sm">❤️</span>
+                        <span className="text-sm text-gray-300">
                           {posts[0].likeCount || 0}
                         </span>
                       </button>
@@ -824,27 +791,11 @@ export default function Home() {
                         {/* 좋아요 버튼 */}
                         <div className="flex items-center justify-end mt-3">
                           <button
-                            onClick={() => toggleLike(post.id)}
-                            className={`flex items-center space-x-1 px-3 py-1 rounded-full transition-colors duration-150 active:scale-95 ${
-                              likedPosts.has(post.id)
-                                ? "bg-red-500/20 border border-red-500/30"
-                                : "bg-gray-700/50 hover:bg-gray-600/50 border border-transparent"
-                            }`}
+                            onClick={() => addLike(post.id)}
+                            className="flex items-center space-x-1 px-3 py-1 rounded-full transition-colors duration-150 active:scale-95 bg-gray-700/50 hover:bg-gray-600/50 border border-transparent"
                           >
-                            <span
-                              className={`text-sm transition-transform duration-150 ${
-                                likedPosts.has(post.id) ? "scale-125" : ""
-                              }`}
-                            >
-                              ❤️
-                            </span>
-                            <span
-                              className={`text-sm transition-colors duration-150 ${
-                                likedPosts.has(post.id)
-                                  ? "text-red-300 font-bold"
-                                  : "text-gray-300"
-                              }`}
-                            >
+                            <span className="text-sm">❤️</span>
+                            <span className="text-sm text-gray-300">
                               {post.likeCount || 0}
                             </span>
                           </button>

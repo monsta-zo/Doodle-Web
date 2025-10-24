@@ -1,47 +1,71 @@
 import { NextResponse } from "next/server";
 import { redis } from "@/lib/redis-client";
 
-// Redis 키
-const ANALYTICS_KEY = "analytics";
-
-// 기본 분석 데이터 구조
-const defaultAnalytics = {
-  totalPageViews: 0,
-  locationPermissionRequests: 0,
-  locationPermissionsGranted: 0,
-  locationPermissionsDenied: 0,
-  postsCreated: 0,
-  likesClicked: 0,
-  lastUpdated: new Date().toISOString(),
+// Redis 키들 (각각 개별 키로 관리)
+const ANALYTICS_KEYS = {
+  totalPageViews: "analytics:totalPageViews",
+  locationPermissionRequests: "analytics:locationPermissionRequests",
+  locationPermissionsGranted: "analytics:locationPermissionsGranted",
+  locationPermissionsDenied: "analytics:locationPermissionsDenied",
+  postsCreated: "analytics:postsCreated",
+  likesClicked: "analytics:likesClicked",
+  lastUpdated: "analytics:lastUpdated",
 };
 
-// 분석 데이터 읽기
+// 분석 데이터 읽기 (개별 키에서 읽어서 조합)
 async function readAnalytics() {
   try {
-    const data = await redis.get(ANALYTICS_KEY);
-    return data ? JSON.parse(data as string) : defaultAnalytics;
+    const [
+      totalPageViews,
+      locationPermissionRequests,
+      locationPermissionsGranted,
+      locationPermissionsDenied,
+      postsCreated,
+      likesClicked,
+      lastUpdated,
+    ] = await Promise.all([
+      redis.get(ANALYTICS_KEYS.totalPageViews),
+      redis.get(ANALYTICS_KEYS.locationPermissionRequests),
+      redis.get(ANALYTICS_KEYS.locationPermissionsGranted),
+      redis.get(ANALYTICS_KEYS.locationPermissionsDenied),
+      redis.get(ANALYTICS_KEYS.postsCreated),
+      redis.get(ANALYTICS_KEYS.likesClicked),
+      redis.get(ANALYTICS_KEYS.lastUpdated),
+    ]);
+
+    return {
+      totalPageViews: parseInt(totalPageViews as string) || 0,
+      locationPermissionRequests:
+        parseInt(locationPermissionRequests as string) || 0,
+      locationPermissionsGranted:
+        parseInt(locationPermissionsGranted as string) || 0,
+      locationPermissionsDenied:
+        parseInt(locationPermissionsDenied as string) || 0,
+      postsCreated: parseInt(postsCreated as string) || 0,
+      likesClicked: parseInt(likesClicked as string) || 0,
+      lastUpdated: (lastUpdated as string) || new Date().toISOString(),
+    };
   } catch (error) {
     console.error("Error reading analytics:", error);
-    return defaultAnalytics;
+    return {
+      totalPageViews: 0,
+      locationPermissionRequests: 0,
+      locationPermissionsGranted: 0,
+      locationPermissionsDenied: 0,
+      postsCreated: 0,
+      likesClicked: 0,
+      lastUpdated: new Date().toISOString(),
+    };
   }
 }
 
-interface AnalyticsData {
-  totalPageViews: number;
-  locationPermissionRequests: number;
-  locationPermissionsGranted: number;
-  locationPermissionsDenied: number;
-  postsCreated: number;
-  likesClicked: number;
-  lastUpdated: string;
-}
-
-// 분석 데이터 저장
-async function writeAnalytics(data: AnalyticsData) {
+// 개별 카운터 증가 (원자적 연산)
+async function incrementCounter(key: string) {
   try {
-    await redis.set(ANALYTICS_KEY, JSON.stringify(data));
+    return await redis.incr(key);
   } catch (error) {
-    console.error("Error writing analytics:", error);
+    console.error(`Error incrementing counter ${key}:`, error);
+    return 0;
   }
 }
 
@@ -50,33 +74,36 @@ export async function POST(request: Request) {
   try {
     const { event } = await request.json();
 
-    const analytics = await readAnalytics();
-
+    let counterKey = "";
     switch (event) {
       case "page_view":
-        analytics.totalPageViews += 1;
+        counterKey = ANALYTICS_KEYS.totalPageViews;
         break;
       case "location_permission_requested":
-        analytics.locationPermissionRequests += 1;
+        counterKey = ANALYTICS_KEYS.locationPermissionRequests;
         break;
       case "location_permission_granted":
-        analytics.locationPermissionsGranted += 1;
+        counterKey = ANALYTICS_KEYS.locationPermissionsGranted;
         break;
       case "location_permission_denied":
-        analytics.locationPermissionsDenied += 1;
+        counterKey = ANALYTICS_KEYS.locationPermissionsDenied;
         break;
       case "post_created":
-        analytics.postsCreated += 1;
+        counterKey = ANALYTICS_KEYS.postsCreated;
         break;
       case "like_clicked":
-        analytics.likesClicked += 1;
+        counterKey = ANALYTICS_KEYS.likesClicked;
         break;
       default:
         console.log("Unknown event:", event);
+        return NextResponse.json({ success: false, error: "Unknown event" });
     }
 
-    analytics.lastUpdated = new Date().toISOString();
-    await writeAnalytics(analytics);
+    // 원자적 증가 연산 사용
+    await incrementCounter(counterKey);
+
+    // lastUpdated 업데이트
+    await redis.set(ANALYTICS_KEYS.lastUpdated, new Date().toISOString());
 
     return NextResponse.json({ success: true });
   } catch (error) {
