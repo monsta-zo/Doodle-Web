@@ -36,8 +36,18 @@ function readAnalytics() {
   }
 }
 
+interface AnalyticsData {
+  totalPageViews: number;
+  locationPermissionRequests: number;
+  locationPermissionsGranted: number;
+  locationPermissionsDenied: number;
+  postsCreated: number;
+  likesClicked: number;
+  lastUpdated: string;
+}
+
 // 분석 데이터 저장
-function writeAnalytics(data) {
+function writeAnalytics(data: AnalyticsData) {
   try {
     fs.writeFileSync(ANALYTICS_FILE, JSON.stringify(data, null, 2));
   } catch (error) {
