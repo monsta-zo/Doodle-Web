@@ -24,7 +24,7 @@ export async function POST() {
 export async function GET() {
   try {
     const keys = await redis.keys("*");
-    const data = {};
+    const data: Record<string, any> = {};
 
     for (const key of keys) {
       const value = await redis.get(key);
