@@ -1,14 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-
-// 이미지 저장 디렉토리
-const IMAGES_DIR = path.join(process.cwd(), "public", "uploads");
-
-// 이미지 디렉토리 생성
-if (!fs.existsSync(IMAGES_DIR)) {
-  fs.mkdirSync(IMAGES_DIR, { recursive: true });
-}
+import { redis } from "@/lib/redis-client";
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,21 +13,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Base64 데이터에서 실제 이미지 데이터 추출
-    const base64Data = imageData.replace(/^data:image\/[a-z]+;base64,/, "");
-    const buffer = Buffer.from(base64Data, "base64");
-
     // 파일명 생성 (타임스탬프 + 랜덤)
     const filename = `image_${Date.now()}_${Math.random()
       .toString(36)
       .substr(2, 9)}.jpg`;
-    const filepath = path.join(IMAGES_DIR, filename);
 
-    // 파일 저장
-    fs.writeFileSync(filepath, buffer);
+    // Redis에 Base64 이미지 저장
+    await redis.set(`image:${filename}`, imageData);
 
-    // 접근 가능한 URL 반환
-    const imageUrl = `/uploads/${filename}`;
+    // 접근 가능한 URL 반환 (API 엔드포인트로)
+    const imageUrl = `/api/image/${filename}`;
 
     return NextResponse.json({
       success: true,
