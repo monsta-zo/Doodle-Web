@@ -48,13 +48,24 @@ export class KVStore {
   // 포스트 추가
   static async addPost(post: Post): Promise<void> {
     try {
+      console.log("KVStore.addPost called with:", post);
+
       // 포스트 데이터 저장
+      console.log("Setting post data...");
       await redis.set(`${this.POST_KEY_PREFIX}${post.id}`, post);
+      console.log("Post data set successfully");
 
       // 포스트 ID를 리스트에 추가 (최신순으로)
+      console.log("Adding post ID to list...");
       await redis.lpush(this.POSTS_KEY, post.id);
+      console.log("Post ID added to list successfully");
     } catch (error) {
       console.error("Error adding post:", error);
+      console.error("Error details:", {
+        message: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
+        name: error instanceof Error ? error.name : undefined,
+      });
       throw error;
     }
   }
