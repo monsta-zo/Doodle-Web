@@ -7,11 +7,13 @@ export async function POST(
 ) {
   try {
     const { id: postId } = await params;
+    console.log("POST /api/posts/[id]/like called for postId:", postId);
 
     // 임시 사용자 ID (실제로는 세션에서 가져와야 함)
     const userId = "anonymous_user";
 
     const result = await KVStore.toggleLike(postId, userId);
+    console.log("Toggle like result:", result);
 
     if (!result.success) {
       return NextResponse.json({ message: "Post not found" }, { status: 404 });
@@ -36,6 +38,8 @@ export async function GET(
 ) {
   try {
     const { id: postId } = await params;
+    console.log("GET /api/posts/[id]/like called for postId:", postId);
+
     const post = await KVStore.findPost(postId);
 
     if (!post) {

@@ -1,1 +1,112 @@
-[]
+[
+  {
+    "id": "1761295841360",
+    "text": "테스트 포스트",
+    "image": null,
+    "location": {
+      "latitude": 35.183205095188974,
+      "longitude": 129.10708116341317
+    },
+    "timestamp": "2025-10-24T08:50:41.360Z",
+    "author": "익명의 방문자",
+    "likes": [],
+    "likeCount": 0
+  },
+  {
+    "id": "1761290785178",
+    "text": "나도 글 함 써보자",
+    "image": "/uploads/image_1761290785121_8med8odwd.jpg",
+    "location": null,
+    "timestamp": "2025-10-24T07:26:25.178Z",
+    "author": "익명의 방문자"
+  },
+  {
+    "id": "1761290319252",
+    "text": "호홍 새 글",
+    "image": null,
+    "location": {
+      "latitude": 35.1828970922716,
+      "longitude": 129.10671189844172
+    },
+    "timestamp": "2025-10-24T07:18:39.252Z",
+    "author": "익명의 방문자",
+    "likes": [
+      {
+        "userId": "user_1761291987904_mhupjxt0k",
+        "timestamp": "2025-10-24T07:46:32.377Z"
+      },
+      {
+        "userId": "user_1761291996262_sono99sis",
+        "timestamp": "2025-10-24T07:46:37.953Z"
+      }
+    ],
+    "likeCount": 25
+  },
+  {
+    "id": "1761290214045",
+    "text": "ㅎㅎ",
+    "image": null,
+    "location": {
+      "latitude": 35.183102122693725,
+      "longitude": 129.10705020686535
+    },
+    "timestamp": "2025-10-24T07:16:54.045Z",
+    "author": "익명의 방문자",
+    "likeCount": 1
+  },
+  {
+    "id": "1761290160512",
+    "text": "??",
+    "image": null,
+    "location": {
+      "latitude": 35.18314538890495,
+      "longitude": 129.10708733063322
+    },
+    "timestamp": "2025-10-24T07:16:00.512Z",
+    "author": "익명의 방문자"
+  },
+  {
+    "id": "1761290153933",
+    "text": "새 글",
+    "image": null,
+    "location": {
+      "latitude": 35.183145351941654,
+      "longitude": 129.1070873232017
+    },
+    "timestamp": "2025-10-24T07:15:53.933Z",
+    "author": "익명의 방문자"
+  },
+  {
+    "id": "1761290054284",
+    "text": "세번 째 글",
+    "image": null,
+    "location": {
+      "latitude": 35.18311094401911,
+      "longitude": 129.1071366409334
+    },
+    "timestamp": "2025-10-24T07:14:14.284Z",
+    "author": "익명의 방문자"
+  },
+  {
+    "id": "1761289907419",
+    "text": "두 번째 글",
+    "image": null,
+    "location": {
+      "latitude": 35.18306193569362,
+      "longitude": 129.10707233614107
+    },
+    "timestamp": "2025-10-24T07:11:47.419Z",
+    "author": "익명의 방문자"
+  },
+  {
+    "id": "1761289886946",
+    "text": "새 글",
+    "image": null,
+    "location": {
+      "latitude": 35.18306194012954,
+      "longitude": 129.10707234017218
+    },
+    "timestamp": "2025-10-24T07:11:26.946Z",
+    "author": "익명의 방문자"
+  }
+]

@@ -1,7 +1,4 @@
-import { Redis } from "@upstash/redis";
-
-// Initialize Redis from environment variables
-const redis = Redis.fromEnv();
+import { redis } from "./redis-client";
 
 export interface Post {
   id: string;
@@ -21,8 +18,12 @@ export class KVStore {
   // 모든 포스트 가져오기
   static async getPosts(): Promise<Post[]> {
     try {
+      console.log("KVStore.getPosts called");
       const postIds = await redis.lrange(this.POSTS_KEY, 0, -1);
+      console.log("Post IDs from Redis:", postIds);
+
       if (!postIds || postIds.length === 0) {
+        console.log("No posts found");
         return [];
       }
 
@@ -35,10 +36,13 @@ export class KVStore {
       }
 
       // 최신순으로 정렬
-      return posts.sort(
+      const sortedPosts = posts.sort(
         (a, b) =>
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
       );
+
+      console.log("Retrieved posts:", sortedPosts.length);
+      return sortedPosts;
     } catch (error) {
       console.error("Error getting posts:", error);
       return [];
@@ -61,11 +65,6 @@ export class KVStore {
       console.log("Post ID added to list successfully");
     } catch (error) {
       console.error("Error adding post:", error);
-      console.error("Error details:", {
-        message: error instanceof Error ? error.message : "Unknown error",
-        stack: error instanceof Error ? error.stack : undefined,
-        name: error instanceof Error ? error.name : undefined,
-      });
       throw error;
     }
   }

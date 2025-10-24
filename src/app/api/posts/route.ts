@@ -4,7 +4,9 @@ import { KVStore, Post } from "@/lib/kv-store";
 // 글 목록 조회
 export async function GET() {
   try {
+    console.log("GET /api/posts called");
     const posts = await KVStore.getPosts();
+    console.log("Returning posts:", posts.length);
     return NextResponse.json(posts);
   } catch (error) {
     console.error("Error reading posts:", error);
@@ -18,7 +20,7 @@ export async function GET() {
 // 새 글 작성
 export async function POST(request: NextRequest) {
   try {
-    console.log("POST request received");
+    console.log("POST /api/posts called");
 
     const body = await request.json();
     console.log("Request body:", body);
