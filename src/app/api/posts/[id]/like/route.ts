@@ -4,12 +4,23 @@ import path from "path";
 
 const postsFilePath = path.join(process.cwd(), "data", "posts.json");
 
-async function readPosts() {
+interface Post {
+  id: string;
+  text: string;
+  image: string | null;
+  location: any;
+  timestamp: string;
+  author: string;
+  likes: any[];
+  likeCount: number;
+}
+
+async function readPosts(): Promise<Post[]> {
   try {
     const data = await fs.readFile(postsFilePath, "utf-8");
     return JSON.parse(data);
   } catch (error) {
-    if (error.code === "ENOENT") {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
       await fs.mkdir(path.dirname(postsFilePath), { recursive: true });
       await fs.writeFile(postsFilePath, "[]", "utf-8");
       return [];
@@ -18,7 +29,7 @@ async function readPosts() {
   }
 }
 
-async function writePosts(posts) {
+async function writePosts(posts: Post[]): Promise<void> {
   await fs.writeFile(postsFilePath, JSON.stringify(posts, null, 2), "utf-8");
 }
 

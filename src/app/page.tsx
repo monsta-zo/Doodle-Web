@@ -52,6 +52,7 @@ export default function Home() {
       location: { latitude: number; longitude: number } | null;
       timestamp: string;
       author: string;
+      likeCount?: number;
     }>
   >([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
@@ -142,7 +143,7 @@ export default function Home() {
         const postsData = await response.json();
         // 좋아요 수 기준으로 정렬 (높은 순)
         const sortedPosts = postsData.sort(
-          (a, b) => (b.likeCount || 0) - (a.likeCount || 0)
+          (a: any, b: any) => (b.likeCount || 0) - (a.likeCount || 0)
         );
         setPosts(sortedPosts);
       }
