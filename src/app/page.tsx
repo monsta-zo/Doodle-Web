@@ -58,6 +58,7 @@ export default function Home() {
   >([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(false);
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+  const [isSubmittingPost, setIsSubmittingPost] = useState(false);
 
   // 분석 이벤트 추적 함수
   const trackEvent = async (event: string) => {
@@ -269,7 +270,12 @@ export default function Home() {
       return; // 아무것도 입력하지 않았으면 그냥 무시
     }
 
+    if (isSubmittingPost) {
+      return; // 이미 제출 중이면 무시
+    }
+
     try {
+      setIsSubmittingPost(true);
       let imageUrl = null;
 
       // 이미지가 있으면 먼저 업로드
@@ -325,6 +331,8 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Error submitting post:", error);
+    } finally {
+      setIsSubmittingPost(false);
     }
   };
 
@@ -622,9 +630,10 @@ export default function Home() {
               {/* 글 남기기 버튼 */}
               <button
                 onClick={submitPost}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+                disabled={isSubmittingPost}
+                className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400/50 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded-lg transition-colors"
               >
-                작성하기
+                {isSubmittingPost ? "작성 중..." : "작성하기"}
               </button>
             </div>
           </div>
